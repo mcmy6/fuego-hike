@@ -1,65 +1,150 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useEffect, useCallback, useRef } from "react";
+import Header from "@/components/Header";
+import CountdownCard from "@/components/CountdownCard";
+import WeekTimeline from "@/components/WeekTimeline";
+import DaySelector from "@/components/DaySelector";
+import UnlockPreview from "@/components/UnlockPreview";
+import WorkoutChecklist from "@/components/WorkoutChecklist";
+import CompleteWorkoutButton from "@/components/CompleteWorkoutButton";
+import CelebrationOverlay from "@/components/CelebrationOverlay";
+import { workouts } from "@/data/workouts";
+import { ITEMS_PER_WEEK } from "@/data/gear";
+import {
+  getWorkoutsCompleted,
+  getTodayChecks,
+  setTodayChecks,
+  isWorkoutCompletedToday,
+  completeWorkout,
+} from "@/lib/progressStore";
 
 export default function Home() {
+  const [workoutsCompleted, setWorkoutsCompleted] = useState(0);
+  const [checks, setChecks] = useState<Record<string, boolean>>({});
+  const [workoutDone, setWorkoutDone] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [isWeekComplete, setIsWeekComplete] = useState(false);
+  const [lastUnlockedId, setLastUnlockedId] = useState<number | undefined>();
+  const [mounted, setMounted] = useState(false);
+  const [previewDay, setPreviewDay] = useState<number | null>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setWorkoutsCompleted(getWorkoutsCompleted());
+    setChecks(getTodayChecks());
+    setWorkoutDone(isWorkoutCompletedToday());
+    setMounted(true);
+  }, []);
+
+  const dayOfWeek = new Date().getDay();
+  const todayWorkout = workouts[dayOfWeek];
+  const exerciseCount = (todayWorkout?.exercises.length || 0) + (todayWorkout?.stairmaster ? 1 : 0);
+
+  const allChecked =
+    exerciseCount > 0 &&
+    Array.from({ length: exerciseCount }, (_, i) => String(i)).every(
+      (key) => checks[key]
+    );
+
+  const handleToggle = useCallback(
+    (index: number) => {
+      if (workoutDone) return;
+      const key = String(index);
+      const newChecks = { ...checks, [key]: !checks[key] };
+      setChecks(newChecks);
+      setTodayChecks(newChecks);
+    },
+    [checks, workoutDone]
+  );
+
+  const handleComplete = useCallback(() => {
+    if (!allChecked || workoutDone) return;
+    const newCount = completeWorkout();
+    setWorkoutsCompleted(newCount);
+    setWorkoutDone(true);
+
+    const weekComplete = newCount % ITEMS_PER_WEEK === 0;
+    setIsWeekComplete(weekComplete);
+    setLastUnlockedId(newCount);
+
+    // Scroll to timeline first, then show celebration after scroll completes
+    timelineRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setTimeout(() => {
+      setShowCelebration(true);
+    }, 600);
+  }, [allChecked, workoutDone]);
+
+  const handleCelebrationDone = useCallback(() => {
+    setShowCelebration(false);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-2xl">🌋</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <>
+      <CelebrationOverlay
+        show={showCelebration}
+        isWeekComplete={isWeekComplete}
+        onDone={handleCelebrationDone}
+      />
+
+      <Header />
+      <CountdownCard />
+      <div ref={timelineRef}>
+        <WeekTimeline
+          workoutsCompleted={workoutsCompleted}
+          lastUnlockedId={lastUnlockedId}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </div>
+      <DaySelector
+        selectedDay={previewDay ?? dayOfWeek}
+        onSelect={(day) => setPreviewDay(day === dayOfWeek ? null : day)}
+      />
+      {previewDay !== null ? (
+        <WorkoutChecklist
+          checks={{}}
+          onToggle={() => {}}
+          workoutCompleted={false}
+          previewDay={previewDay}
+          onBack={() => {
+            const prev = (previewDay + 6) % 7;
+            setPreviewDay(prev === dayOfWeek ? null : prev);
+          }}
+          onForward={() => {
+            const next = (previewDay + 1) % 7;
+            setPreviewDay(next === dayOfWeek ? null : next);
+          }}
+        />
+      ) : (
+        <>
+          <WorkoutChecklist
+            checks={checks}
+            onToggle={handleToggle}
+            workoutCompleted={workoutDone}
+            onBack={() => setPreviewDay((dayOfWeek + 6) % 7)}
+            onForward={() => setPreviewDay((dayOfWeek + 1) % 7)}
+          />
+          <CompleteWorkoutButton
+            allChecked={allChecked}
+            workoutCompleted={workoutDone}
+            workoutsCompleted={workoutsCompleted}
+            onComplete={handleComplete}
+          />
+          <UnlockPreview
+            workoutsCompleted={workoutsCompleted}
+            onPreview={() => setPreviewDay((dayOfWeek + 1) % 7)}
+          />
+        </>
+      )}
+
+      <div className="h-8" />
+    </>
   );
 }
