@@ -7,11 +7,13 @@ export default function CompleteWorkoutButton({
   workoutCompleted,
   workoutsCompleted,
   onComplete,
+  selectedDay,
 }: {
   allChecked: boolean;
   workoutCompleted: boolean;
   workoutsCompleted: number;
   onComplete: () => void;
+  selectedDay: number;
 }) {
   // Find the next week (if current week just completed)
   const currentWeekIndex = Math.min(
@@ -39,9 +41,8 @@ export default function CompleteWorkoutButton({
     );
   }
 
-  // Rest days: Sunday (0) and Wednesday (3)
-  const dayOfWeek = new Date().getDay();
-  if (dayOfWeek === 0 || dayOfWeek === 3) return null;
+  // Rest days: Sunday (0) and Thursday (4)
+  if (selectedDay === 0 || selectedDay === 4) return null;
 
   return (
     <div className="mx-4 mb-8">

@@ -16,21 +16,19 @@ export default function WorkoutChecklist({
   checks,
   onToggle,
   workoutCompleted,
-  previewDay,
+  selectedDay,
   onBack,
   onForward,
 }: {
   checks: Record<string, boolean>;
   onToggle: (exerciseIndex: number) => void;
   workoutCompleted: boolean;
-  previewDay?: number | null;
+  selectedDay: number;
   onBack?: () => void;
   onForward?: () => void;
 }) {
-  const dayOfWeek = previewDay ?? new Date().getDay();
-  const isPreview = previewDay != null;
-  const todayWorkout = workouts[dayOfWeek];
-  const dateLabel = getDateForDay(dayOfWeek);
+  const todayWorkout = workouts[selectedDay];
+  const dateLabel = getDateForDay(selectedDay);
 
   if (!todayWorkout || todayWorkout.exercises.length === 0) {
     return (
@@ -48,7 +46,7 @@ export default function WorkoutChecklist({
               <button
                 type="button"
                 onClick={onForward}
-                className={`text-sm text-orange-500 font-medium active:scale-95 transition-transform ${dayOfWeek === 6 ? "opacity-20 pointer-events-none" : ""}`}
+                className={`text-sm text-orange-500 font-medium active:scale-95 transition-transform ${selectedDay === 6 ? "opacity-20 pointer-events-none" : ""}`}
               >→</button>
             )}
           </div>
@@ -68,7 +66,7 @@ export default function WorkoutChecklist({
     <div className="mx-4 mb-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex-1">
-          {!isPreview && workoutCompleted ? (
+          {workoutCompleted ? (
             <span className="text-xs bg-green-100/80 text-green-700 px-2 py-1 rounded-full font-medium">
               Done ✓
             </span>
@@ -85,7 +83,7 @@ export default function WorkoutChecklist({
             <button
               type="button"
               onClick={onForward}
-              className={`text-sm text-orange-500 font-medium active:scale-95 transition-transform ${dayOfWeek === 6 ? "opacity-20 pointer-events-none" : ""}`}
+              className={`text-sm text-orange-500 font-medium active:scale-95 transition-transform ${selectedDay === 6 ? "opacity-20 pointer-events-none" : ""}`}
             >→</button>
           )}
         </div>
@@ -105,7 +103,7 @@ export default function WorkoutChecklist({
             exercise={exercise}
             checked={!!checks[String(idx)]}
             onToggle={() => onToggle(idx)}
-            disabled={workoutCompleted || isPreview}
+            disabled={workoutCompleted}
           />
         ))}
       </div>
@@ -122,7 +120,7 @@ export default function WorkoutChecklist({
             }}
             checked={!!checks[String(todayWorkout.exercises.length)]}
             onToggle={() => onToggle(todayWorkout.exercises.length)}
-            disabled={workoutCompleted || isPreview}
+            disabled={workoutCompleted}
           />
         </div>
       )}

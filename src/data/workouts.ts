@@ -49,17 +49,9 @@ export const workouts: Record<number, DayWorkout> = {
     stairmasterNotes: "20 mins - active recovery",
     warmdown: "5-10 min upper body stretch",
   },
-  // Wednesday = 3 (Rest Day)
+  // Wednesday = 3
   3: {
     day: "Wednesday",
-    focus: "Rest / Active Recovery",
-    warmup: "",
-    exercises: [],
-    warmdown: "",
-  },
-  // Thursday = 4
-  4: {
-    day: "Thursday",
     focus: "Endurance Lower (Hiking Prep)",
     warmup: "5-10 min light bike/row + dynamic stretching",
     exercises: [
@@ -72,6 +64,14 @@ export const workouts: Record<number, DayWorkout> = {
     stairmaster: "StairMaster (moderate pace)",
     stairmasterNotes: "20-25 mins - increased from last week!",
     warmdown: "5-10 min full lower body stretch",
+  },
+  // Thursday = 4 (Rest Day)
+  4: {
+    day: "Thursday",
+    focus: "Rest / Active Recovery",
+    warmup: "",
+    exercises: [],
+    warmdown: "",
   },
   // Friday = 5
   5: {

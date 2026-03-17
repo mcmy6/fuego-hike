@@ -108,8 +108,8 @@ export default function WorkoutItem({
         </div>
       </button>
 
-      {/* Weight tracking row — visible for weighted exercises before and after checking */}
-      {isWeighted && !disabled && (
+      {/* Weight tracking row — always visible for weighted exercises */}
+      {isWeighted && (
         <div className="ml-12 mr-3 -mt-1 mb-2 flex items-center gap-2">
           {suggestedWeight && (
             <span className="text-[11px] bg-orange-50 text-orange-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap">

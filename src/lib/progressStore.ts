@@ -4,6 +4,7 @@ const KEYS = {
   workoutsCompleted: "fuegohike_workouts_completed",
   lastCompletedDate: "fuegohike_last_completed_date",
   todayChecks: "fuegohike_today_checks",
+  completedDays: "fuegohike_completed_days",
 };
 
 function isBrowser() {
@@ -50,6 +51,46 @@ export function setTodayChecks(checks: Record<string, boolean>) {
     KEYS.todayChecks,
     JSON.stringify({ ...checks, _date: getTodayISO() })
   );
+}
+
+/** Per-day checks keyed by day of week (0-6) */
+export function getDayChecks(dayOfWeek: number): Record<string, boolean> {
+  if (!isBrowser()) return {};
+  const stored = localStorage.getItem(`fuegohike_day_${dayOfWeek}_checks`);
+  if (!stored) return {};
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return {};
+  }
+}
+
+export function setDayChecks(dayOfWeek: number, checks: Record<string, boolean>) {
+  if (!isBrowser()) return;
+  localStorage.setItem(`fuegohike_day_${dayOfWeek}_checks`, JSON.stringify(checks));
+}
+
+/** Track which days of the week have been completed */
+export function getCompletedDays(): Set<number> {
+  if (!isBrowser()) return new Set();
+  const stored = localStorage.getItem(KEYS.completedDays);
+  if (!stored) return new Set();
+  try {
+    return new Set(JSON.parse(stored));
+  } catch {
+    return new Set();
+  }
+}
+
+export function markDayCompleted(dayOfWeek: number) {
+  if (!isBrowser()) return;
+  const days = getCompletedDays();
+  days.add(dayOfWeek);
+  localStorage.setItem(KEYS.completedDays, JSON.stringify([...days]));
+}
+
+export function isDayCompleted(dayOfWeek: number): boolean {
+  return getCompletedDays().has(dayOfWeek);
 }
 
 export function getTodayISO(): string {
