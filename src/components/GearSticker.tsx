@@ -61,15 +61,15 @@ export default function GearSticker({
       }}
     >
       <div className="relative">
-        {/* Y2K sticker styling: white border, drop shadow */}
+        {/* Y2K scrapbook sticker: thick white border, heavy drop shadow */}
         <div
-          className={`rounded-xl shadow-lg ${
+          className={`rounded-xl ${
             imageExists
-              ? "bg-white p-1"
-              : "bg-white/90 p-2 flex items-center justify-center"
+              ? "bg-white p-1.5 border-2 border-white"
+              : "bg-white/90 p-2 border-2 border-white flex items-center justify-center"
           }`}
           style={{
-            filter: "drop-shadow(2px 3px 4px rgba(0,0,0,0.15))",
+            boxShadow: "3px 4px 8px rgba(0,0,0,0.2), 1px 1px 0px rgba(0,0,0,0.05)",
           }}
         >
           {imageExists ? (
@@ -84,7 +84,7 @@ export default function GearSticker({
             <span className="text-3xl">{item.fallbackEmoji}</span>
           )}
         </div>
-        <p className="text-[10px] text-center mt-1 font-medium text-gray-600 whitespace-nowrap">
+        <p className="text-[10px] text-center mt-1 font-medium text-gray-600 whitespace-nowrap drop-shadow-sm">
           {item.name}
         </p>
       </div>

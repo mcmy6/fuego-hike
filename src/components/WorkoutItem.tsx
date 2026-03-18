@@ -147,7 +147,7 @@ export default function WorkoutItem({
                   setSaved(true);
                 }
               }}
-              className={`text-[11px] px-2 py-1 rounded-lg font-medium ${checked ? "bg-gray-300 text-gray-500" : "bg-orange-500 text-white active:scale-95"}`}
+              className={`text-[11px] px-2 py-1 rounded-lg font-medium transition-all ${checked ? "bg-gray-400 text-gray-200" : "bg-orange-500 text-white active:scale-95"}`}
             >
               Log
             </button>
