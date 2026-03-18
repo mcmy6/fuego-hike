@@ -1,27 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { WeekData } from "@/data/gear";
 import CharacterDisplay from "./CharacterDisplay";
-
-const WASHI_TAPES = ["/washi-1.png", "/washi-2.png", "/washi-3.png"];
-
-// Washi tape accent — uses real uploaded images
-function WashiTape({ className, tapeIndex }: { className?: string; tapeIndex: number }) {
-  const src = WASHI_TAPES[tapeIndex % WASHI_TAPES.length];
-  return (
-    <div className={`absolute z-20 ${className}`}>
-      <Image
-        src={src}
-        alt=""
-        width={80}
-        height={24}
-        className="opacity-80 object-cover"
-        style={{ filter: "drop-shadow(1px 1px 2px rgba(0,0,0,0.1))" }}
-      />
-    </div>
-  );
-}
 
 export default function WeekCard({
   week,
@@ -47,11 +27,7 @@ export default function WeekCard({
 
   if (isComplete) {
     return (
-      <div className="mx-4 mb-3 rounded-2xl shadow-sm overflow-visible relative scrapbook-card">
-        {/* Washi tape accents */}
-        <WashiTape className="-top-2 left-4 -rotate-3" tapeIndex={0} />
-        <WashiTape className="-top-2 right-6 rotate-2" tapeIndex={1} />
-
+      <div className="mx-4 mb-3 rounded-2xl shadow-sm overflow-hidden relative scrapbook-card">
         <div className="p-3 flex items-center gap-3 border-b border-gray-200/40">
           <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-sm">
             ✅
@@ -82,11 +58,7 @@ export default function WeekCard({
 
   // Active (in-progress) week
   return (
-    <div className="mx-4 mb-3 rounded-2xl shadow-md overflow-visible ring-1 ring-orange-300/60 relative scrapbook-card">
-      {/* Washi tape accents */}
-      <WashiTape className="-top-2 left-6 -rotate-2" tapeIndex={2} />
-      <WashiTape className="-top-2 right-4 rotate-3" tapeIndex={0} />
-
+    <div className="mx-4 mb-3 rounded-2xl shadow-md overflow-hidden ring-1 ring-orange-300/60 relative scrapbook-card">
       <div className="p-3 flex items-center justify-between border-b border-orange-100/40">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-sm animate-pulse">

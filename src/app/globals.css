@@ -15,10 +15,28 @@ body {
 
 /* Scrapbook paper texture card */
 .scrapbook-card {
-  background-image: url('/paper-texture.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background:
+    repeating-linear-gradient(
+      120deg,
+      rgba(255,255,255,0) 0px,
+      rgba(255,255,255,0.03) 2px,
+      rgba(0,0,0,0.01) 3px,
+      rgba(255,255,255,0) 5px
+    ),
+    repeating-linear-gradient(
+      60deg,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0.008) 1px,
+      rgba(255,255,255,0.02) 3px,
+      rgba(0,0,0,0) 4px
+    ),
+    linear-gradient(
+      175deg,
+      rgba(248,245,240,0.95) 0%,
+      rgba(242,238,232,0.98) 40%,
+      rgba(238,234,228,0.95) 100%
+    );
+  background-color: #f5f2ed;
 }
 
 /* Scrapbook handwriting title */
